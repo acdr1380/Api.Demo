@@ -3,17 +3,23 @@ using Api.Model;
 
 namespace Api.Service
 {
-    public class TestService
+    public class TestService : BaseService<TestModel>
     {
         readonly ISqlSugarClient client;
-        public TestService(ISqlSugarClient _client)
+
+        public TestService(ISqlSugarClient _client) : base(_client)
         {
             client = _client;
         }
 
-        public TestModel GetUser(string id)
+        public IEnumerable<TestModel> GetTestModels()
         {
-            var user =  client.Queryable<TestModel>().Where(x => x.Id == id).First();
+            return client.Queryable<TestModel>().ToList();
+        }
+
+        public TestModel GetTestModel(string id)
+        {
+            var user = client.Queryable<TestModel>().Where(x => x.Id == id).First();
             if (user is null)
                 throw new Exception("未找到！");
             return user;

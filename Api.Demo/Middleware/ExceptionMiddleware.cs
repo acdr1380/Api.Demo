@@ -26,13 +26,13 @@ namespace Api.Demo.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                // context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 await context.Response.WriteAsJsonAsync(new ApiResponse<string>()
                 {
+                    State = HttpStatusCode.InternalServerError,
                     Success = false,
                     Message = ex.Message,
-                    Data = null
-                });
+                }); ;
             }
         }
     }
