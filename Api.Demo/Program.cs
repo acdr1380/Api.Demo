@@ -1,10 +1,10 @@
 using Api.Demo;
 using Api.Demo.Middleware;
 using SqlSugar;
+using Api.Service;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// 添加控制器
+// 添加控制器，处理时间格式
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
@@ -20,7 +20,7 @@ builder.Services.AddSingleton<ISqlSugarClient>(s =>
     string dataBase = config.GetValue<string>("ConnectionConfig:Database");
     string uid = config.GetValue<string>("ConnectionConfig:Uid");
     string pwd = config.GetValue<string>("ConnectionConfig:Pwd");
-    SqlSugarScope sqlSugar = new SqlSugarScope(new ConnectionConfig()
+    SqlSugarScope sqlSugar = new(new ConnectionConfig()
     {
         DbType = DbType.MySql,
         ConnectionString = $"Server={server};Port={port};Database={dataBase};Uid={uid};Pwd={pwd};",

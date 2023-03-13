@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Api.Model;
 using Api.Demo.Common;
 using Api.Service;
 using SqlSugar;
 using Newtonsoft.Json;
+using Api.Model.SysManagement;
 
 namespace Api.Demo.Controllers
 {
@@ -37,7 +37,7 @@ namespace Api.Demo.Controllers
         [HttpGet("{id}")]
         public Task<ApiResponse<TestModel>> GetTestById(string id)
         {
-            var user = service.GetTestModel(id);
+            var user = service.Get(id);
             if (user is null)
                 throw new Exception("未找到！");
             return Task.FromResult(new ApiResponse<TestModel>()
