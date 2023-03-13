@@ -27,12 +27,12 @@ namespace Api.Demo.Middleware
             {
                 _logger.LogError(ex, ex.Message);
                 // context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsJsonAsync(new ApiResponse<string>()
+                await context.Response.WriteAsJsonAsync(new ApiResponse()
                 {
                     State = HttpStatusCode.InternalServerError,
                     Success = false,
                     Message = ex.Message,
-                }); ;
+                });
             }
         }
     }

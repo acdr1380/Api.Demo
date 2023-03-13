@@ -11,6 +11,6 @@ namespace Api.IRepository.SysManagement
         /// <param name="pageIndex">页码，第几页</param>
         /// <param name="pageSize">条数，返回几条</param>
         /// <returns></returns>
-        Task<IEnumerable<SysUser>> GetListPage(string key, int pageIndex, int pageSize, out int total);
+        IEnumerable<SysUser> GetListPage(string key, int pageIndex, int pageSize, ref int total);
     }
 }

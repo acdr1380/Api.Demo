@@ -1,7 +1,7 @@
 ﻿using SqlSugar;
-using Api.Service.IService;
 using Api.IRepository;
 using Api.Repository;
+using Api.IService;
 
 namespace Api.Service
 {
@@ -13,7 +13,7 @@ namespace Api.Service
     {
         public readonly ISqlSugarClient client;
 
-        IBaseRepository<T> repository;
+        public IBaseRepository<T> repository;
 
         public BaseService(ISqlSugarClient _client)
         {
@@ -39,7 +39,7 @@ namespace Api.Service
         /// <exception cref="Exception"></exception>
         public virtual async Task<IEnumerable<T>> GetList()
         {
-                return await repository.GetList();
+            return await repository.GetList();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Api.Service
         /// <exception cref="Exception"></exception>
         public virtual async Task<bool> Add(IEnumerable<T> models)
         {
-           return await repository.Add(models);
+            return await repository.Add(models);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Api.Service
         /// <exception cref="Exception"></exception>
         public virtual async Task<bool> Delete(IEnumerable<string> ids)
         {
-           return await repository.Delete(ids);
+            return await repository.Delete(ids);
         }
 
         /// <summary>

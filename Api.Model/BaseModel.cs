@@ -14,7 +14,7 @@ namespace Api.Model
     {
         [SugarColumn(IsPrimaryKey = true)] // 主键
         public string Id { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.Now;
-        public DateTime? ModifiedDate { get; set; } = DateTime.Now;
+        public DateTime? CreateDate { get; set; }
+        public DateTime? ModifiedDate { get; set; } 
     }
 }

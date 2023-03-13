@@ -6,11 +6,11 @@ namespace Api.Demo.Common
     /// 统一返回格式
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ApiResponse<T>
+    public class ApiResponse
     {
         public HttpStatusCode State { get; set; } = HttpStatusCode.OK;
         public bool Success { get; set; } = true;
-        public T? Data { get; set; } = default;
+        public Object? Data { get; set; }
         public string? Message { get; set; } = null;
     }
 }

@@ -10,10 +10,9 @@ namespace Api.Repository.SysManagement
         {
         }
 
-        public Task<IEnumerable<SysUser>> GetListPage(string key, int pageIndex, int pageSize, out int total)
+        public IEnumerable<SysUser> GetListPage(string key, int pageIndex, int pageSize, ref int total)
         {
-            return client.Queryable<SysUser>().ToPageList(pageIndex, pageSize,ref total);
+            return client.Queryable<SysUser>().ToPageList(pageIndex, pageSize, ref total);
         }
-
     }
 }
