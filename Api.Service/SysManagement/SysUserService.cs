@@ -19,5 +19,10 @@ namespace Api.Service.SysManagement
         {
             return repository.GetListPage(key, pageIndex, pageSize, ref total);
         }
+
+        public async Task<SysUser> Login(string UserAccount, string PassWord)
+        {
+            return await repository.Login(UserAccount, PassWord);
+        }
     }
 }

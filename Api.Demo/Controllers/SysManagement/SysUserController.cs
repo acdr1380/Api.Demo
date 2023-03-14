@@ -8,7 +8,7 @@ using SqlSugar;
 
 namespace Api.Demo.Controllers.SysManagement
 {
-    [Route("api/[controller]", Name = "user")]
+    [Route("api/user")]
     [ApiController]
     public class SysUserController : ControllerBase
     {
@@ -45,6 +45,20 @@ namespace Api.Demo.Controllers.SysManagement
             {
                 Data = d,
                 Message = "添加成功！"
+            };
+        }
+
+        [HttpPost("login")]
+        public async Task<ApiResponse> Login([FromBody] dynamic data)
+        {
+            SysUser d = JsonConvert.DeserializeObject<SysUser>(JsonConvert.SerializeObject(data));
+            if (d.UserAccount == null || d.PassWord == null)
+                throw new Exception("账号跟密码不能为空！");
+            var user = await service.Login(d.UserAccount, d.PassWord);
+            return new ApiResponse()
+            {
+                Data = user,
+                Message = "登录成功！"
             };
         }
 

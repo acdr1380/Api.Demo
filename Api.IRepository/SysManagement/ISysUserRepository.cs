@@ -12,5 +12,13 @@ namespace Api.IRepository.SysManagement
         /// <param name="pageSize">条数，返回几条</param>
         /// <returns></returns>
         IEnumerable<SysUser> GetListPage(string key, int pageIndex, int pageSize, ref int total);
+
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="UserAccount">账号</param>
+        /// <param name="PassWord">密码</param>
+        /// <returns></returns>
+        Task<SysUser> Login(string UserAccount, string PassWord);
     }
 }
