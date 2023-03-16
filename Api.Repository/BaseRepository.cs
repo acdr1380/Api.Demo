@@ -46,6 +46,32 @@ namespace Api.Repository
         }
 
         /// <summary>
+        /// 添加单条
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual async Task<bool> Add(T model)
+        {
+            try
+            {
+                await client.Ado.BeginTranAsync();
+                int num = await Task.Run(() => client.Insertable(model).ExecuteCommand());
+                if (num == 0)
+                {
+                    await client.Ado.RollbackTranAsync();
+                    throw new Exception("新增失败！");
+                }
+                await client.Ado.CommitTranAsync();
+                return num > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"服务错误:{ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// 批量添加
         /// </summary>
         /// <param name="models"></param>
@@ -77,6 +103,32 @@ namespace Api.Repository
         /// <param name="ids">主键id数组</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
+        public virtual async Task<bool> Delete(string id)
+        {
+            try
+            {
+                await client.Ado.BeginTranAsync();
+                int num = await Task.Run(() => client.Deleteable<T>().In(id).ExecuteCommand());
+                if (num == 0)
+                {
+                    await client.Ado.RollbackTranAsync();
+                    throw new Exception("新增失败！");
+                }
+                await client.Ado.CommitTranAsync();
+                return num > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"服务错误:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="ids">主键id数组</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public virtual async Task<bool> Delete(IEnumerable<string> ids)
         {
             try
@@ -99,6 +151,32 @@ namespace Api.Repository
 
         /// <summary>
         /// 更新
+        /// </summary>
+        /// <param name="models">更新的实体对象</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual async Task<T> Update(T model)
+        {
+            try
+            {
+                await client.Ado.BeginTranAsync();
+                int num = await Task.Run(() => client.Updateable(model).ExecuteCommand());
+                if (num == 0)
+                {
+                    await client.Ado.RollbackTranAsync();
+                    throw new Exception("新增失败！");
+                }
+                await client.Ado.CommitTranAsync();
+                return model;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"服务错误:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 批量更新
         /// </summary>
         /// <param name="models">更新的实体对象</param>
         /// <returns></returns>

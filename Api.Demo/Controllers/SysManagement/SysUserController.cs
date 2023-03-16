@@ -8,12 +8,12 @@ using SqlSugar;
 
 namespace Api.Demo.Controllers.SysManagement
 {
-    [Route("user")]
+    [Route("system/user")]
     [ApiController]
     public class SysUserController : ControllerBase
     {
         private ISysUserService service;
-        public SysUserController(ILogger<SysUserController> logger, ISqlSugarClient client, ISysUserService _service)
+        public SysUserController(ILogger<SysUserController> logger, ISysUserService _service)
         {
             service = _service;
         }

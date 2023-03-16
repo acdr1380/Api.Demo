@@ -11,11 +11,11 @@ namespace Api.Service
     /// <typeparam name="T"></typeparam>
     public class BaseService<T> : IBaseService<T> where T : class, new()
     {
-        private IBaseRepository<T> repository;
+        private IBaseRepository<T> _repository;
 
-        public BaseService(IBaseRepository<T> _repository)
+        public BaseService(IBaseRepository<T> repository)
         {
-            repository = _repository;
+            _repository = repository;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Api.Service
         /// <exception cref="NotImplementedException"></exception>
         public virtual async Task<T> Get(string id)
         {
-            return await repository.Get(id);
+            return await _repository.Get(id);
         }
 
         /// <summary>
@@ -36,7 +36,19 @@ namespace Api.Service
         /// <exception cref="Exception"></exception>
         public virtual async Task<IEnumerable<T>> GetList()
         {
-            return await repository.GetList();
+            return await _repository.GetList();
+        }
+
+
+        /// <summary>
+        /// 添加单条
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual async Task<bool> Add(T model)
+        {
+            return await _repository.Add(model);
         }
 
         /// <summary>
@@ -47,29 +59,51 @@ namespace Api.Service
         /// <exception cref="Exception"></exception>
         public virtual async Task<bool> Add(IEnumerable<T> models)
         {
-            return await repository.Add(models);
+            return await _repository.Add(models);
         }
 
         /// <summary>
-        /// 删除
+        /// 删除单条
+        /// </summary>
+        /// <param name="id">主键id</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual async Task<bool> Delete(string id)
+        {
+            return await _repository.Delete(id);
+        }
+
+        /// <summary>
+        /// 批量删除
         /// </summary>
         /// <param name="ids">主键id数组</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public virtual async Task<bool> Delete(IEnumerable<string> ids)
         {
-            return await repository.Delete(ids);
+            return await _repository.Delete(ids);
         }
 
         /// <summary>
-        /// 更新
+        /// 更新单条
+        /// </summary>
+        /// <param name="models">更新的实体对象</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual async Task<T> Update(T model)
+        {
+            return await _repository.Update(model);
+        }
+
+        /// <summary>
+        /// 批量更新
         /// </summary>
         /// <param name="models">更新的实体对象</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public virtual async Task<IEnumerable<T>> Update(IEnumerable<T> models)
         {
-            return await repository.Update(models);
+            return await _repository.Update(models);
         }
     }
 }

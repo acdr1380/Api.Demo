@@ -5,15 +5,16 @@ using SqlSugar;
 
 namespace Api.Demo.Controllers
 {
-    public class BaseController<TService, TModel> : ControllerBase where TService : new()
+    public class BaseController<TService, TModel> : ControllerBase
     {
-        private readonly ILogger<BaseController<TService, TModel>> _logger;
+        private readonly ILogger _logger;
 
-        private readonly TService service;
+        private readonly TService _service;
 
-        public BaseController(ILogger<BaseController<TService, TModel>> logger, ISqlSugarClient client)
+        public BaseController(ILogger logger, TService service)
         {
             _logger = logger;
+            _service = service;
         }
     }
 }

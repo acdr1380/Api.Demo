@@ -11,20 +11,20 @@ namespace Api.Service.SysManagement
     [AutoInject(typeof(ISysUserService), InjectType.Scope)]
     public class SysUserService : BaseService<SysUser>, ISysUserService
     {
-        public ISysUserRepository repository;
-        public SysUserService(ISysUserRepository _repository):base(_repository)
+        public ISysUserRepository _repository;
+        public SysUserService(ISysUserRepository repository) : base(repository)
         {
-            repository = _repository;
+            _repository = repository;
         }
 
         public IEnumerable<SysUser> GetListPage(string key, int pageIndex, int pageSize, ref int total)
         {
-            return repository.GetListPage(key, pageIndex, pageSize, ref total);
+            return _repository.GetListPage(key, pageIndex, pageSize, ref total);
         }
 
         public async Task<SysUser> Login(string UserAccount, string PassWord)
         {
-            return await repository.Login(UserAccount, PassWord);
+            return await _repository.Login(UserAccount, PassWord);
         }
     }
 }
