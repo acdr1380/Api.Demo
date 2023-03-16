@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
     <ProjectReference Include="..\Api.IRepository\Api.IRepository.csproj" />
     <ProjectReference Include="..\Api.IService\Api.IService.csproj" />
     <ProjectReference Include="..\Api.Model\Api.Model.csproj" />

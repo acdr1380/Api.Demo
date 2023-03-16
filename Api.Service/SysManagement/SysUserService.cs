@@ -4,15 +4,17 @@ using SqlSugar;
 using Api.IRepository;
 using Api.IRepository.SysManagement;
 using Api.Repository.SysManagement;
+using Api.Common;
 
 namespace Api.Service.SysManagement
 {
+    [AutoInject(typeof(ISysUserService), InjectType.Scope)]
     public class SysUserService : BaseService<SysUser>, ISysUserService
     {
-        public new ISysUserRepository repository;
-        public SysUserService(ISqlSugarClient _client) : base(_client)
+        public ISysUserRepository repository;
+        public SysUserService(ISysUserRepository _repository):base(_repository)
         {
-            repository = new SysUserRepository(_client);
+            repository = _repository;
         }
 
         public IEnumerable<SysUser> GetListPage(string key, int pageIndex, int pageSize, ref int total)

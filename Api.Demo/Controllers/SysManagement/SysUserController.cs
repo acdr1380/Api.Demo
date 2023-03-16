@@ -1,4 +1,4 @@
-﻿using Api.Demo.Common;
+﻿using Api.Common;
 using Api.IService.SysManagement;
 using Api.Model.SysManagement;
 using Api.Service.SysManagement;
@@ -8,14 +8,14 @@ using SqlSugar;
 
 namespace Api.Demo.Controllers.SysManagement
 {
-    [Route("api/user")]
+    [Route("user")]
     [ApiController]
     public class SysUserController : ControllerBase
     {
         private ISysUserService service;
-        public SysUserController(ILogger<SysUserController> logger, ISqlSugarClient client)
+        public SysUserController(ILogger<SysUserController> logger, ISqlSugarClient client, ISysUserService _service)
         {
-            service = new SysUserService(client);
+            service = _service;
         }
 
         [HttpGet]

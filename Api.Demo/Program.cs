@@ -1,7 +1,8 @@
-using Api.Demo;
 using Api.Demo.Middleware;
 using SqlSugar;
-using Api.Service;
+using Api.IService.SysManagement;
+using Api.Service.SysManagement;
+using Api.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 // 添加控制器，处理时间格式
@@ -29,9 +30,15 @@ builder.Services.AddSingleton<ISqlSugarClient>(s =>
     return sqlSugar;
 });
 
+// 注入服务
+//builder.Services.AddSingleton<ISysUserService, SysUserService>();
+// 自动注入
+builder.Services.AddAutoDi();
+
+
 var app = builder.Build();
 
-// 添加自定义中间件
+// 添加异常处理
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();

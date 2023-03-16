@@ -1,6 +1,6 @@
 ﻿using Api.Model;
 using System.Net;
-using Api.Demo.Common;
+using Api.Common;
 namespace Api.Demo.Middleware
 {
     /// <summary>
@@ -29,7 +29,7 @@ namespace Api.Demo.Middleware
                 // context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 await context.Response.WriteAsJsonAsync(new ApiResponse()
                 {
-                    State = HttpStatusCode.InternalServerError,
+                    Code = HttpStatusCode.InternalServerError,
                     Success = false,
                     Message = ex.Message,
                 });

@@ -11,14 +11,11 @@ namespace Api.Service
     /// <typeparam name="T"></typeparam>
     public class BaseService<T> : IBaseService<T> where T : class, new()
     {
-        public readonly ISqlSugarClient client;
+        private IBaseRepository<T> repository;
 
-        public IBaseRepository<T> repository;
-
-        public BaseService(ISqlSugarClient _client)
+        public BaseService(IBaseRepository<T> _repository)
         {
-            client = _client;
-            repository = new BaseRepository<T>(client);
+            repository = _repository;
         }
 
         /// <summary>

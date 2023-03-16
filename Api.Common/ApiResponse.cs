@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Api.Demo.Common
+namespace Api.Common
 {
     /// <summary>
     /// 统一返回格式
@@ -8,7 +8,7 @@ namespace Api.Demo.Common
     /// <typeparam name="T"></typeparam>
     public class ApiResponse
     {
-        public HttpStatusCode State { get; set; } = HttpStatusCode.OK;
+        public HttpStatusCode Code { get; set; } = HttpStatusCode.OK;
         public bool Success { get; set; } = true;
         public Object? Data { get; set; }
         public string? Message { get; set; } = null;

@@ -1,9 +1,11 @@
-﻿using Api.IRepository.SysManagement;
+﻿using Api.Common;
+using Api.IRepository.SysManagement;
 using Api.Model.SysManagement;
 using SqlSugar;
 
 namespace Api.Repository.SysManagement
 {
+    [AutoInject(typeof(ISysUserRepository), InjectType.Scope)]
     public class SysUserRepository : BaseRepository<SysUser>, ISysUserRepository
     {
         public SysUserRepository(ISqlSugarClient _client) : base(_client)
@@ -20,7 +22,7 @@ namespace Api.Repository.SysManagement
             var a = client.Queryable<SysUser>().Where(x => x.UserAccount == UserAccount && x.PassWord == PassWord).ToList();
             var user = await Task.Run(() => client.Queryable<SysUser>().Where(x => x.UserAccount == UserAccount && x.PassWord == PassWord).ToList());
             if (user.Count == 0)
-                throw new Exception("未查询到用户信息");
+                throw new Exception("用户名或密码不正确！");
             return user.First();
         }
     }

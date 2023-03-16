@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
     <ProjectReference Include="..\Api.IRepository\Api.IRepository.csproj" />
     <ProjectReference Include="..\Api.Model\Api.Model.csproj" />
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿using Api.IRepository;
+﻿using Api.Common;
+using Api.IRepository;
 using SqlSugar;
 
 namespace Api.Repository
@@ -7,6 +8,7 @@ namespace Api.Repository
     /// 基类仓储
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [AutoInject(typeof(IBaseRepository<>), InjectType.Scope)]
     public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
         public readonly ISqlSugarClient client;

@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
     <ProjectReference Include="..\Api.IService\Api.IService.csproj" />
-    <ProjectReference Include="..\Api.Model\Api.Model.csproj" />
     <ProjectReference Include="..\Api.Service\Api.Service.csproj" />
   </ItemGroup>
 
