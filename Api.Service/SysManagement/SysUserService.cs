@@ -5,6 +5,7 @@ using Api.IRepository;
 using Api.IRepository.SysManagement;
 using Api.Repository.SysManagement;
 using Api.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Service.SysManagement
 {

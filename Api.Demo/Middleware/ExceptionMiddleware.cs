@@ -25,9 +25,9 @@ namespace Api.Demo.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError(ex.Message);
                 // context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsJsonAsync(new ApiResponse()
+                await context.Response.WriteAsJsonAsync(new ActionResponse()
                 {
                     Code = HttpStatusCode.InternalServerError,
                     Success = false,

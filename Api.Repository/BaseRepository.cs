@@ -8,8 +8,7 @@ namespace Api.Repository
     /// 基类仓储
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [AutoInject(typeof(IBaseRepository<>), InjectType.Scope)]
-    public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
+    public abstract class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
         public readonly ISqlSugarClient client;
         public BaseRepository(ISqlSugarClient _client)

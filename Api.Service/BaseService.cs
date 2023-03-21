@@ -9,7 +9,7 @@ namespace Api.Service
     /// 基类服务
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class BaseService<T> : IBaseService<T> where T : class, new()
+    public abstract class BaseService<T> : IBaseService<T> where T : class, new()
     {
         private IBaseRepository<T> _repository;
 
@@ -26,7 +26,10 @@ namespace Api.Service
         /// <exception cref="NotImplementedException"></exception>
         public virtual async Task<T> Get(string id)
         {
-            return await _repository.Get(id);
+            var d = await _repository.Get(id);
+            if (d is null)
+                throw new Exception("未查询到信息");
+            return d;
         }
 
         /// <summary>
