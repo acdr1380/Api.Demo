@@ -21,6 +21,7 @@ namespace Api.Demo.Controllers.SysManagement
         [HttpGet]
         public async Task<ActionResponse> Get()
         {
+            await Task.Run(() => Thread.Sleep(2000));
             return new ActionResponse()
             {
                 Data = await _service.GetList(),
