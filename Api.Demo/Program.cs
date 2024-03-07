@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // 添加log4net
-builder.Logging.AddLog4Net("log4net.config");
+builder.Logging.AddLog4Net("./log4net.config");
 
 // 添加控制器，处理时间格式
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -42,7 +42,6 @@ builder.Services.AddSingleton<ISqlSugarClient>(s =>
 
 // 自动注入
 builder.Services.AddAutoDi();
-
 
 var app = builder.Build();
 

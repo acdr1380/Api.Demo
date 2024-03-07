@@ -4,7 +4,7 @@ using Api.Common;
 namespace Api.Demo.Middleware
 {
     /// <summary>
-    /// 统一异常处理
+    /// 全局异常捕获
     /// </summary>
     public class ExceptionMiddleware
     {
@@ -27,7 +27,7 @@ namespace Api.Demo.Middleware
             {
                 _logger.LogError(ex.Message);
                 // context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsJsonAsync(new ActionResponse()
+                await context.Response.WriteAsJsonAsync(new Response()
                 {
                     Code = HttpStatusCode.InternalServerError,
                     Success = false,

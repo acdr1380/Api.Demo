@@ -1,48 +1,47 @@
 ﻿using Api.Common;
 using Api.IService.SysManagement;
 using Api.Model.SysManagement;
-using Api.Service.SysManagement;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SqlSugar;
 
 namespace Api.Demo.Controllers.SysManagement
 {
     [Route("system/user")]
     [ApiController]
-    public class SysUserController : ControllerBase
+    public class SysUserController : BaseController<SysUser, ISysUserService>
     {
-        private ISysUserService _service;
-        public SysUserController(ISysUserService service)
+
+        public SysUserController(ILogger<SysUser> logger, ISysUserService service) : base(logger, service)
         {
-            _service = service;
         }
 
+
         [HttpGet]
-        public async Task<ActionResponse> Get()
+        public async Task<Response> Get()
         {
-            return new ActionResponse()
+            await Task.Run(() => Task.Delay(2000));
+            return new Response()
             {
-                Data = await _service.GetList(),
+                Data = await service.GetList(),
             };
         }
 
         //[HttpGet("{id:int}")] 可以设置路由匹配参数的类型，类型不符，不会去匹配
         [HttpGet("{id}")]
-        public async Task<ActionResponse> Get(string id)
+        public async Task<Response> Get(string id)
         {
-            return new ActionResponse()
+            return new Response()
             {
-                Data = await _service.Get(id),
+                Data = await service.Get(id),
             };
         }
 
         [HttpPost]
-        public async Task<ActionResponse> Post([FromBody] dynamic data)
+        public async Task<Response> Add([FromBody] dynamic data)
         {
             SysUser d = JsonConvert.DeserializeObject<SysUser>(JsonConvert.SerializeObject(data));
-            await _service.Add(new List<SysUser>() { d });
-            return new ActionResponse()
+            await service.Add(d);
+            return new Response()
             {
                 Data = d,
                 Message = "添加成功！"
@@ -50,13 +49,14 @@ namespace Api.Demo.Controllers.SysManagement
         }
 
         [HttpPost("login")]
-        public async Task<ActionResponse> Login([FromBody] dynamic data)
+        public async Task<Response> Login([FromBody] dynamic data)
         {
             SysUser d = JsonConvert.DeserializeObject<SysUser>(JsonConvert.SerializeObject(data));
             if (d.UserAccount == null || d.PassWord == null)
                 throw new Exception("账号跟密码不能为空！");
-            var user = await _service.Login(d.UserAccount, d.PassWord);
-            return new ActionResponse()
+            var user = await service.Login(d.UserAccount, d.PassWord);
+            logger.LogError($"{user.UserName}登录了系统！");
+            return new Response()
             {
                 Data = user,
                 Message = "登录成功！"
@@ -64,11 +64,11 @@ namespace Api.Demo.Controllers.SysManagement
         }
 
         [HttpPut]
-        public async Task<ActionResponse> Put([FromBody] dynamic data)
+        public async Task<Response> Update([FromBody] dynamic data)
         {
             SysUser d = JsonConvert.DeserializeObject<SysUser>(JsonConvert.SerializeObject(data));
-            await _service.Update(new List<SysUser>() { d });
-            return new ActionResponse()
+            await service.Update(new List<SysUser>() { d });
+            return new Response()
             {
                 Data = d,
                 Message = "更新成功！"
@@ -76,13 +76,14 @@ namespace Api.Demo.Controllers.SysManagement
         }
 
         [HttpDelete]
-        public async Task<ActionResponse> Delete(string id)
+        public async Task<Response> Delete(string id)
         {
-            await _service.Delete(new List<string>() { id });
-            return new ActionResponse()
+            await service.Delete(new List<string>() { id });
+            return new Response()
             {
                 Message = "删除成功！"
             };
         }
+
     }
 }

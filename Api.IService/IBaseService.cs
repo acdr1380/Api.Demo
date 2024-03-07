@@ -1,11 +1,13 @@
-﻿using Api.IRepository;
+﻿using Api.Model;
+using SqlSugar;
+
 namespace Api.IService
 {
     /// <summary>
     /// 基类服务接口
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IBaseService<T> where T : class
+    public interface IBaseService<T> where T : BaseModel
     {
         /// <summary>
         /// 查询单个
@@ -24,14 +26,14 @@ namespace Api.IService
         /// </summary>
         /// <param name="model">新的数据对象</param>
         /// <returns></returns>
-        Task<bool> Add(T model);
+        Task<T> Add(T model);
 
         /// <summary>
         /// 批量添加新的数据
         /// </summary>
         /// <param name="models">新的数据对象</param>
         /// <returns></returns>
-        Task<bool> Add(IEnumerable<T> models);
+        Task<IEnumerable<T>> Add(IEnumerable<T> models);
 
         /// <summary>
         /// 根据传入主键删除

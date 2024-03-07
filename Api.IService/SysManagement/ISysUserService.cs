@@ -2,7 +2,7 @@
 
 namespace Api.IService.SysManagement
 {
-    public interface ISysUserService : IBaseService<SysUser>
+    public interface ISysUserService : IBaseService<SysUser> 
     {
         /// <summary>
         /// 分页查询
