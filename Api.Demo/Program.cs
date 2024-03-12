@@ -1,5 +1,6 @@
 using Api.Common;
 using Api.Demo.Middleware;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SqlSugar;
 
@@ -28,12 +29,22 @@ builder.Services.AddSingleton<ISqlSugarClient>(s =>
     string dataBase = configuration.GetValue<string>("ConnectionConfig:Database");
     string uid = configuration.GetValue<string>("ConnectionConfig:Uid");
     string pwd = configuration.GetValue<string>("ConnectionConfig:Pwd");
-    SqlSugarScope sqlSugar = new(new ConnectionConfig()
+
+    SqlSugarClient sqlSugar = new(new ConnectionConfig()
     {
         DbType = DbType.MySql,
         ConnectionString = $"Server={server};Port={port};Database={dataBase};Uid={uid};Pwd={pwd};",
         IsAutoCloseConnection = true,
+        InitKeyType = InitKeyType.Attribute,
     });
+
+
+    sqlSugar.Aop.OnLogExecuting = (sql, pars) =>
+    {
+        // 在这里添加你的日志记录代码，例如：
+        Console.WriteLine($"SQL: {sql}, Parameters: {JsonConvert.SerializeObject(pars)}");
+    };
+
     return sqlSugar;
 });
 

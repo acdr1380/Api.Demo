@@ -1,6 +1,8 @@
 ﻿using SqlSugar;
 using Api.IService;
 using Api.Model;
+using Api.Common;
+using System.Reflection;
 
 namespace Api.Service
 {
@@ -28,12 +30,12 @@ namespace Api.Service
         {
             try
             {
-                var model = await Task.Run(() => client.Queryable<T>().InSingle(id));
+                var model = await client.Queryable<T>().Where(x => x.Id == id).SingleAsync();
                 return model is null ? throw new Exception("未查询到信息") : model;
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -46,11 +48,11 @@ namespace Api.Service
         {
             try
             {
-                return await Task.Run(() => client.Queryable<T>().ToList());
+                return await client.Queryable<T>().ToListAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -65,6 +67,14 @@ namespace Api.Service
         {
             try
             {
+                // 判断是否有主键，没有就手动生成
+                if (string.IsNullOrEmpty(model.Id))
+                {
+                    model.Id = CommonFuncs.GetGuid();
+                }
+                model.CreateDate = DateTime.Now;
+                model.ModifiedDate = DateTime.Now;
+
                 await client.Ado.BeginTranAsync();
                 int num = await client.Insertable(model).ExecuteCommandAsync();
                 if (num == 0)
@@ -77,7 +87,7 @@ namespace Api.Service
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -91,8 +101,20 @@ namespace Api.Service
         {
             try
             {
+
+                foreach (T model in models)
+                {
+                    // 判断是否有主键，没有就手动生成
+                    if (string.IsNullOrEmpty(model.Id))
+                    {
+                        model.Id = CommonFuncs.GetGuid();
+                    }
+                    model.CreateDate = DateTime.Now;
+                    model.ModifiedDate = DateTime.Now;
+                }
+
                 await client.Ado.BeginTranAsync();
-                int num = await Task.Run(() => client.Insertable<T>(models).ExecuteCommand());
+                int num = await client.Insertable<T>(models).ExecuteCommandAsync();
                 if (num == 0)
                 {
                     await client.Ado.RollbackTranAsync();
@@ -103,7 +125,7 @@ namespace Api.Service
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -118,18 +140,18 @@ namespace Api.Service
             try
             {
                 await client.Ado.BeginTranAsync();
-                int num = await Task.Run(() => client.Deleteable<T>().In(id).ExecuteCommand());
+                int num = await client.Deleteable<T>().Where(x => x.Id == id).ExecuteCommandAsync();
                 if (num == 0)
                 {
                     await client.Ado.RollbackTranAsync();
-                    throw new Exception("新增失败！");
+                    throw new Exception("删除失败！");
                 }
                 await client.Ado.CommitTranAsync();
                 return num > 0;
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -144,7 +166,7 @@ namespace Api.Service
             try
             {
                 await client.Ado.BeginTranAsync();
-                int num = await Task.Run(() => client.Deleteable<T>().In(ids).ExecuteCommand());
+                int num = await client.Deleteable<T>().In(ids).ExecuteCommandAsync();
                 if (num == 0)
                 {
                     await client.Ado.RollbackTranAsync();
@@ -155,7 +177,7 @@ namespace Api.Service
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -169,8 +191,14 @@ namespace Api.Service
         {
             try
             {
+                if (string.IsNullOrEmpty(model.Id))
+                {
+                    throw new Exception("未获取到对象主键");
+                }
+
+                model.ModifiedDate = DateTime.Now;
                 await client.Ado.BeginTranAsync();
-                int num = await Task.Run(() => client.Updateable(model).ExecuteCommand());
+                int num = await client.Updateable(model).ExecuteCommandAsync();
                 if (num == 0)
                 {
                     await client.Ado.RollbackTranAsync();
@@ -181,7 +209,7 @@ namespace Api.Service
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
 
@@ -195,8 +223,18 @@ namespace Api.Service
         {
             try
             {
+                foreach (var model in models)
+                {
+                    if (string.IsNullOrEmpty(model.Id))
+                    {
+                        throw new Exception("未获取到对象主键");
+                    }
+
+                    model.ModifiedDate = DateTime.Now;
+                }
+
                 await client.Ado.BeginTranAsync();
-                int num = await Task.Run(() => client.Updateable<T>(models).ExecuteCommand());
+                int num = await client.Updateable<T>(models).ExecuteCommandAsync();
                 if (num == 0)
                 {
                     await client.Ado.RollbackTranAsync();
@@ -207,42 +245,8 @@ namespace Api.Service
             }
             catch (Exception ex)
             {
-                throw new Exception($"服务错误:{ex.Message}");
+                throw new Exception($"服务错误：{ex.Message}");
             }
         }
-
-        /// <summary>
-        /// 判断泛型是否有指定属性，并且属性是否为空
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public static bool IsPropertyNullOrEmpty(T model, string propertyName)
-        {
-            var property = typeof(T).GetProperty(propertyName);
-            // 判断是否存在属性
-            if (property == null)
-            {
-                return true;
-            }
-
-            var value = property.GetValue(model);
-
-            // 对于引用类型（包括可空引用类型）
-            if (value == null)
-            {
-                return true;
-            }
-
-            // 对于值类型，需根据具体类型判断其是否为默认值
-            Type valueType = property.PropertyType;
-            if (valueType.IsValueType && value.Equals(Activator.CreateInstance(valueType)))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
     }
 }
