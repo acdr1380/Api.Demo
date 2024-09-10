@@ -1,4 +1,4 @@
-﻿using Api.Common;
+﻿using Api.Common.Model;
 using Api.IService.SysManagement;
 using Api.Model.SysManagement;
 using Microsoft.AspNetCore.Mvc;

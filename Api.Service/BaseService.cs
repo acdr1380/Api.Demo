@@ -3,6 +3,7 @@ using Api.IService;
 using Api.Model;
 using Api.Common;
 using System.Reflection;
+using Api.Common.Model;
 
 namespace Api.Service
 {
@@ -25,13 +26,38 @@ namespace Api.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="Exception"></exception>
         public virtual async Task<T> Get(string id)
         {
             try
             {
                 var model = await client.Queryable<T>().Where(x => x.Id == id).SingleAsync();
                 return model is null ? throw new Exception("未查询到信息") : model;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"服务错误：{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <param name="pageIndex">页码</param>
+        /// <param name="pageSize">页码大小</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual async Task<Page<T>> GetListPage(int pageIndex, int pageSize)
+        {
+            try
+            {
+                Page<T> page = new(pageIndex, pageSize);
+                RefAsync<int> totalCount = 0, pageCount = 0;
+
+                var model = await client.Queryable<T>().ToPageListAsync(pageIndex, pageSize, totalCount, pageCount);
+                page.Data = model;
+                page.Total = totalCount;
+                return page;
             }
             catch (Exception ex)
             {

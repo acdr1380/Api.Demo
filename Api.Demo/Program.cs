@@ -3,13 +3,13 @@ using Api.Demo.Middleware;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SqlSugar;
+using Autofac.Extensions.DependencyInjection;
+using Autofac;
+using Api.Demo;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
-
-// 添加log4net
-builder.Logging.AddLog4Net("./log4net.config");
 
 // 添加控制器，处理时间格式
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -48,11 +48,13 @@ builder.Services.AddSingleton<ISqlSugarClient>(s =>
     return sqlSugar;
 });
 
-// 注入服务
-//builder.Services.AddSingleton<ISysUserService, SysUserService>();
-
-// 自动注入
-builder.Services.AddAutoDi();
+// 添加autofac
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(containerBuilder =>
+    {
+        // 在这里向Autofac容器注册服务
+        containerBuilder.RegisterModule<AutofacModule>();
+    });
 
 var app = builder.Build();
 

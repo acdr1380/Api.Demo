@@ -1,6 +1,8 @@
-﻿using Api.Model;
-using System.Net;
-using Api.Common;
+﻿using System.Net;
+using Api.Common.Model;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
 namespace Api.Demo.Middleware
 {
     /// <summary>

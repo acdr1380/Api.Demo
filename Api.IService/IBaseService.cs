@@ -1,5 +1,5 @@
-﻿using Api.Model;
-using SqlSugar;
+﻿using Api.Common.Model;
+using Api.Model;
 
 namespace Api.IService
 {
@@ -14,6 +14,15 @@ namespace Api.IService
         /// </summary>
         /// <returns></returns>
         Task<T> Get(string id);
+
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <param name="key">关键字，为空就不管</param>
+        /// <param name="pageIndex">页码，第几页</param>
+        /// <param name="pageSize">条数，返回几条</param>
+        /// <returns></returns>
+        Task<Page<T>> GetListPage(int pageIndex, int pageSize);
 
         /// <summary>
         /// 查询全部

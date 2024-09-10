@@ -13,11 +13,13 @@ namespace Api.Service.SysManagement
         {
         }
 
-        public IEnumerable<SysUser> GetListPage(string key, int pageIndex, int pageSize, ref int total)
-        {
-            return client.Queryable<SysUser>().ToPageList(pageIndex, pageSize, ref total);
-        }
-
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="UserAccount">用户名</param>
+        /// <param name="PassWord">密码</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<SysUser> Login(string UserAccount, string PassWord)
         {
             var user = await Task.Run(() =>

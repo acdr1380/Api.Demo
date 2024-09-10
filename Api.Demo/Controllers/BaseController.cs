@@ -1,4 +1,4 @@
-﻿using Api.Common;
+﻿using Api.Common.Model;
 using Api.IService;
 using Api.Model;
 using Api.Model.SysManagement;
@@ -59,7 +59,7 @@ namespace Api.Demo.Controllers
             return new Response()
             {
                 Data = string.IsNullOrEmpty(d.Id) ? await service.Add(d) : await service.Update(d),
-                Message = "添加成功！"
+                Message = string.IsNullOrEmpty(d.Id) ? "添加成功！" : "更新成功！"
             };
         }
 
