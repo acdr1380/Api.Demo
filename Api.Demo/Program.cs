@@ -6,6 +6,7 @@ using SqlSugar;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using Api.Demo;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 });
 
-//注册上下文：AOP里面可以获取IOC对象
+// 注册上下文：AOP里面可以获取IOC对象
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ISqlSugarClient>(s =>
 {
@@ -48,6 +49,14 @@ builder.Services.AddSingleton<ISqlSugarClient>(s =>
     return sqlSugar;
 });
 
+// 添加日志
+builder.Services.AddLogging(logBuilder =>
+{
+    logBuilder.ClearProviders();// 删除所有其他的关于日志记录的配置
+    logBuilder.SetMinimumLevel(LogLevel.Trace);// 设置最低的log级别
+    logBuilder.AddNLog("NLog.config");// 支持nlog
+});
+
 // 添加autofac
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
     .ConfigureContainer<ContainerBuilder>(containerBuilder =>
@@ -55,6 +64,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
         // 在这里向Autofac容器注册服务
         containerBuilder.RegisterModule<AutofacModule>();
     });
+
 
 var app = builder.Build();
 
