@@ -1,7 +1,7 @@
 ﻿using Api.Common.Model;
 using Api.IService;
 using Api.Model;
-using Api.Model.SysManagement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -22,7 +22,8 @@ namespace Api.Demo.Controllers
         /// <summary>
         /// 查询所有
         /// </summary>
-        /// <returns></returns>
+        /// <returns>查询所有数据</returns>
+        [Authorize]
         [HttpGet]
         public async Task<Response> GetPageList()
         {
@@ -38,6 +39,7 @@ namespace Api.Demo.Controllers
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns>{id}可以设置路由匹配参数的类型，类型不符，不会去匹配</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<Response> Get(string id)
         {
@@ -52,6 +54,7 @@ namespace Api.Demo.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<Response> AddOrUpdate([FromBody] dynamic data)
         {
@@ -68,6 +71,7 @@ namespace Api.Demo.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         public async Task<Response> Update([FromBody] dynamic data)
         {
@@ -84,6 +88,7 @@ namespace Api.Demo.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<Response> Delete(string id)
         {
@@ -100,6 +105,7 @@ namespace Api.Demo.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete]
         public async Task<Response> Delete([FromBody] dynamic data)
         {

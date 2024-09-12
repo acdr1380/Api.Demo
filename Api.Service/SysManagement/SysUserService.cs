@@ -1,16 +1,16 @@
 ﻿using Api.Model.SysManagement;
 using Api.IService.SysManagement;
 using SqlSugar;
-using Api.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace Api.Service.SysManagement
 {
-    [AutoInject(typeof(ISysUserService), InjectType.Scope)]
     public class SysUserService : BaseService<SysUser>, ISysUserService
     {
-
-        public SysUserService(ISqlSugarClient client) : base(client)
+        public readonly IConfiguration configuration;
+        public SysUserService(ISqlSugarClient client, IConfiguration config) : base(client)
         {
+            this.configuration = config;
         }
 
         /// <summary>

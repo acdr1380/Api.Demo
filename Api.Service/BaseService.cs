@@ -2,7 +2,6 @@
 using Api.IService;
 using Api.Model;
 using Api.Common;
-using System.Reflection;
 using Api.Common.Model;
 
 namespace Api.Service
@@ -10,7 +9,7 @@ namespace Api.Service
     /// <summary>
     /// 基类服务
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T"></typeparam
     public abstract class BaseService<T> : IBaseService<T> where T : BaseModel, new()
     {
         // 数据库连接
@@ -24,7 +23,7 @@ namespace Api.Service
         /// <summary>
         /// 根据主键查询单个
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">表格主键</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public virtual async Task<T> Get(string id)
