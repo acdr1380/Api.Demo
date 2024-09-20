@@ -27,7 +27,6 @@ namespace Api.Demo.Controllers.SysManagement
         /// <param name="data">登录信息</param>
         /// <returns>返回登陆信息</returns>
         /// <exception cref="Exception"></exception>
-        [IgnoreAntiforgeryToken]
         [HttpPost("login")]
         public async Task<Response> Login([FromBody] dynamic data)
         {
@@ -37,6 +36,7 @@ namespace Api.Demo.Controllers.SysManagement
             {
                 throw new Exception("账号跟密码不能为空！");
             }
+
             var user = await service.Login(d.UserAccount, d.PassWord);
 
             // 2.生成JWT
