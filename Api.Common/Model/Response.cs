@@ -1,5 +1,4 @@
-﻿using Api.Model;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json.Serialization;
 
 namespace Api.Common.Model

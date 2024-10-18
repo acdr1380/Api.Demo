@@ -1,4 +1,5 @@
 ﻿using SqlSugar;
+using Api.Common;
 
 namespace Api.Model
 {
@@ -8,8 +9,8 @@ namespace Api.Model
     public class BaseModel
     {
         [SugarColumn(IsPrimaryKey = true)] // 主键
-        public string Id { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public DateTime? ModifiedDate { get; set; } 
+        public string Id { get; set; } = CommonFuncs.GetGuid();
+        public DateTime CreatedTime { get; set; } = DateTime.Now;
+        public DateTime UpdatedTime { get; set; } = DateTime.Now;
     }
 }

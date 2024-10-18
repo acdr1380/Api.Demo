@@ -7,17 +7,20 @@ namespace Api.Demo
     {
         protected override void Load(ContainerBuilder builder)
         {
-            // 程序集内所有具象类 
+            // 注册指定程序集中的服务类
             builder.RegisterAssemblyTypes(Assembly.Load("Api.Service"))
-            // 选择具有名称以 “Service” 结尾的类
-            .Where(x => x.Name.EndsWith("Service"))
-            // 不要以Base开头的类
-            .Where(x => !x.Name.StartsWith("Base"))
-            // 只要public访问权限的
-            .PublicOnly()
-            // 只要class型（主要为了排除值和interface类型） 
-            .Where(x => x.IsClass)
-            .AsImplementedInterfaces();
+                // 选择以 "Service" 结尾的类
+                .Where(type => type.Name.EndsWith("Service"))
+                // 排除以 "Base" 开头的类
+                .Where(type => !type.Name.StartsWith("Base"))
+                // 仅注册公共类
+                .PublicOnly()
+                // 确保类型为类
+                .Where(type => type.IsClass)
+                // 注册为实现的接口
+                .AsImplementedInterfaces()
+                // 设置生命周期（可选），例如：每个请求一个实例
+                .InstancePerLifetimeScope();
         }
     }
 }

@@ -1,4 +1,3 @@
-
 using Api.Demo;
 using Api.Demo.Middleware;
 using Autofac;
@@ -14,93 +13,88 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 获取配置信息
 var configuration = builder.Configuration;
 
-// 添加控制器，处理时间格式
+// 添加控制器，并设置 JSON 序列化选项
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
-    // 处理日期格式
+    // 设置日期格式
     options.SerializerSettings.DateFormatString = "yyyy-MM-dd";
-    // 处理返回的属性首字母大小写
+    // 设置属性序列化时首字母小写
     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 });
 
-// 添加验权
+// 添加 JWT 验证
 builder.Services.AddAuthentication(x =>
-    {
-        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }
-).AddJwtBearer(options =>
 {
-    //取出私钥
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    // 获取私钥
     var secretByte = Encoding.UTF8.GetBytes(configuration["Authentication:SecretKey"]);
 
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters()
+    options.RequireHttpsMetadata = false; // 是否需要 HTTPS
+    options.SaveToken = true; // 保存令牌
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-
-        //验证发布者
-        ValidateIssuer = true,
-        ValidIssuer = configuration["Authentication:Issuer"],
-
-        //验证接收者
-        ValidateAudience = true,
-        ValidAudience = configuration["Authentication:Audience"],
-
-        //验证是否过期
-        ValidateLifetime = true,
-        //验证私钥
-        IssuerSigningKey = new SymmetricSecurityKey(secretByte),
-
-        ClockSkew = TimeSpan.Zero
+        ValidateIssuerSigningKey = true, // 验证签名密钥
+        ValidateIssuer = true, // 验证发行者
+        ValidIssuer = configuration["Authentication:Issuer"], // 有效的发行者
+        ValidateAudience = true, // 验证接收者
+        ValidAudience = configuration["Authentication:Audience"], // 有效的接收者
+        ValidateLifetime = true, // 验证令牌有效期
+        IssuerSigningKey = new SymmetricSecurityKey(secretByte), // 签名密钥
+        ClockSkew = TimeSpan.Zero // 令牌过期的宽限时间
     };
-
 });
 
-// 注册上下文：AOP里面可以获取IOC对象
+// 注册 HTTP 上下文访问器
 builder.Services.AddHttpContextAccessor();
+
+// 配置 SqlSugar 客户端
 builder.Services.AddSingleton<ISqlSugarClient>(s =>
 {
-    string server = configuration.GetValue<string>("ConnectionConfig:Server");
-    string port = configuration.GetValue<string>("ConnectionConfig:Port");
-    string dataBase = configuration.GetValue<string>("ConnectionConfig:Database");
-    string uid = configuration.GetValue<string>("ConnectionConfig:Uid");
-    string pwd = configuration.GetValue<string>("ConnectionConfig:Pwd");
+    var server = configuration.GetValue<string>("ConnectionConfig:Server");
+    var port = configuration.GetValue<string>("ConnectionConfig:Port");
+    var database = configuration.GetValue<string>("ConnectionConfig:Database");
+    var uid = configuration.GetValue<string>("ConnectionConfig:Uid");
+    var pwd = configuration.GetValue<string>("ConnectionConfig:Pwd");
 
-    SqlSugarClient sqlSugar = new(new ConnectionConfig()
+    // 创建 SqlSugar 客户端
+    SqlSugarClient sqlSugar = new(new ConnectionConfig
     {
-        DbType = DbType.MySql,
-        ConnectionString = $"Server={server};Port={port};Database={dataBase};Uid={uid};Pwd={pwd};",
-        IsAutoCloseConnection = true,
-        InitKeyType = InitKeyType.Attribute,
+        DbType = DbType.MySql, // 数据库类型
+        ConnectionString = $"Server={server};Port={port};Database={database};Uid={uid};Pwd={pwd};",
+        IsAutoCloseConnection = true, // 自动关闭连接
+        InitKeyType = InitKeyType.Attribute, // 属性初始化方式
     });
 
-
+    // 添加 SQL 执行日志
     sqlSugar.Aop.OnLogExecuting = (sql, pars) =>
     {
-        // 在这里添加你的日志记录代码，例如：
-        Console.WriteLine($"SQL: {sql}, Parameters: {JsonConvert.SerializeObject(pars)}");
+        // 记录 SQL 执行信息
+        // Console.WriteLine($"SQL: {sql}, Parameters: {JsonConvert.SerializeObject(pars)}");
+
     };
 
     return sqlSugar;
 });
 
-// 添加日志
+// 添加日志支持
 builder.Services.AddLogging(logBuilder =>
 {
-    logBuilder.ClearProviders();// 删除所有其他的关于日志记录的配置
-    logBuilder.SetMinimumLevel(LogLevel.Trace);// 设置最低的log级别
-    logBuilder.AddNLog("NLog.config");// 支持nlog
+    logBuilder.ClearProviders(); // 清除默认日志提供者
+    logBuilder.SetMinimumLevel(LogLevel.Trace); // 设置日志级别
+    logBuilder.AddNLog("NLog.config"); // 使用 NLog 配置文件
 });
 
-// 添加swagger
+// 添加 Swagger 文档生成
 builder.Services.AddSwaggerGen(s =>
 {
     s.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "在下框中输入请求头中需要添加Jwt授权Token：Bearer Token",
         Name = "Authorization",
@@ -111,45 +105,45 @@ builder.Services.AddSwaggerGen(s =>
     });
 
     s.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
+            new OpenApiSecurityScheme
             {
-                new OpenApiSecurityScheme{
-                    Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                    }
-                },new string[] { }
-            }
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            }, new string[] { }
         }
-    );
+    });
 });
 
-
-// 添加autofac
+// 配置 Autofac 作为依赖注入容器
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
     .ConfigureContainer<ContainerBuilder>(containerBuilder =>
     {
-        // 在这里向Autofac容器注册服务
-        containerBuilder.RegisterModule<AutofacModule>();
+        containerBuilder.RegisterModule<AutofacModule>(); // 注册 Autofac 模块
     });
 
 var app = builder.Build();
 
-// 添加异常处理
+// 添加异常处理中间件
 app.UseMiddleware<ExceptionMiddleware>();
 
-//添加jwt验证  这2句千万不能忘记了，顺序不能颠倒。
+// 添加 JWT 验证中间件（顺序重要）
 app.UseAuthentication();
-//代码从上到下执行，中间可以加判断， 权限设置问题
-app.UseAuthorization();
+app.UseAuthorization(); // 添加授权中间件
 
+// 开发环境下启用 Swagger
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-
-    app.UseSwaggerUI();
+    app.UseSwagger(); // 启用 Swagger 中间件
+    app.UseSwaggerUI(); // 启用 Swagger UI
 }
 
+// 映射控制器
 app.MapControllers();
 
+// 启动应用
 app.Run();
