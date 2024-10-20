@@ -6,6 +6,11 @@ namespace Api.Model.SysManagement
     public class SysMenu : BaseModel
     {
         /// <summary>
+        /// 编码
+        /// </summary>
+        public string Code { get; set; } = string.Empty;
+
+        /// <summary>
         /// 标题
         /// </summary>
         public string Title { get; set; } = string.Empty;
